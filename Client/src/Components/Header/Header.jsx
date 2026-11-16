@@ -5,7 +5,7 @@ import logoBlanco from "../../assets/Image/LogoBlanco.png";
 import logoColor from "../../assets/Image/Logo.png";
 import heroVideo from "../../assets/Videos/Barra Punto 29.mp4";
 
-import "./Header.css";
+import "./header.css";
 
 const Header = () => {
   return (
