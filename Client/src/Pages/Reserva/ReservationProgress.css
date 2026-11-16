@@ -1,0 +1,107 @@
+.reservation-progress {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 18px 28px 16px;
+  border-bottom: 1px solid rgba(102, 102, 102, 0.25);
+  background: rgba(244, 238, 225, 0.92);
+  color: #666;
+}
+
+.reservation-progress__item {
+  position: relative;
+  display: flex;
+  width: 150px;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-align: center;
+}
+
+.reservation-progress__item:not(:last-child)::after {
+  position: absolute;
+  top: 16px;
+  left: calc(50% + 21px);
+  width: 108px;
+  height: 2px;
+  background: #666;
+  content: "";
+  opacity: 0.3;
+}
+
+.reservation-progress__icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 2px solid #666;
+  border-radius: 50%;
+  background: #f4eee1;
+  color: #666;
+  font-size: 18px;
+}
+
+.reservation-progress__icon svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.reservation-progress__item.is-done {
+  color: #333;
+}
+
+.reservation-progress__item.is-done .reservation-progress__icon {
+  border-color: #e5c77f;
+  background: #e5c77f;
+  color: #333;
+}
+
+.reservation-progress__item.is-current {
+  color: #333;
+}
+
+.reservation-progress__item.is-current .reservation-progress__icon {
+  border-color: #333;
+  background: #333;
+  color: #f4eee1;
+  box-shadow: 0 0 0 5px rgba(229, 199, 127, 0.35);
+  animation: reservation-progress-pulse 1.8s ease-in-out infinite;
+}
+
+.reservation-progress__item a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+  text-decoration: none;
+}
+
+@keyframes reservation-progress-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@media (max-width: 700px) {
+  .reservation-progress {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 13px 10px 12px;
+  }
+
+  .reservation-progress__item {
+    min-width: 105px;
+    width: 105px;
+  }
+
+  .reservation-progress__item:not(:last-child)::after {
+    left: calc(50% + 19px);
+    width: 65px;
+  }
+}

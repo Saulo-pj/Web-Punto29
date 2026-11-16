@@ -1,0 +1,580 @@
+/* ================================
+   HERO PRINCIPAL
+================================ */
+
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 700px;
+  overflow: hidden;
+  background: #000;
+}
+
+/* ================================
+   VIDEO
+================================ */
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* ================================
+   CAPA SOBRE EL VIDEO
+================================ */
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.25);
+
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+/* ================================
+   HEADER
+================================ */
+
+.header-container {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 105px;
+
+  z-index: 10;
+
+  background: transparent;
+
+  transition:
+    background-color 0.35s ease,
+    box-shadow 0.35s ease;
+
+  border-bottom: 1px solid transparent;
+}
+
+/* ================================
+   EFECTO HOVER
+================================ */
+
+.header-container:hover {
+  background: #ffffff;
+
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+
+  border-bottom: 1px solid #eeeeee;
+}
+
+/* ================================
+   CONTENEDOR INTERNO
+================================ */
+
+.header-inner {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+
+  align-items: center;
+
+  padding: 0 55px;
+
+  gap: 48px;
+}
+
+.header-right {
+  position: static;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 42px;
+}
+
+/* ================================
+   BUSCADOR
+================================ */
+
+.header-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.search-bar {
+  width: 260px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+
+  padding: 8px 0;
+
+  transition: border-color 0.35s ease;
+}
+
+.search-icon {
+  font-size: 17px;
+
+  color: white;
+
+  transition: color 0.35s ease;
+}
+
+.search-bar input {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  font-family: Georgia, serif;
+  font-style: italic;
+
+  font-size: 17px;
+
+  color: white;
+
+  transition: color 0.35s ease;
+}
+
+.search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* HOVER DEL HEADER */
+
+.header-container:hover .search-bar {
+  border-color: #777;
+}
+
+.header-container:hover .search-icon {
+  color: #777;
+}
+
+.header-container:hover .search-bar input {
+  color: #333;
+}
+
+.header-container:hover .search-bar input::placeholder {
+  color: #777;
+}
+
+/* ================================
+   NAVEGACIÓN
+================================ */
+
+.nav-group {
+  display: flex;
+
+  align-items: center;
+
+  gap: 38px;
+
+  white-space: nowrap;
+}
+
+.nav-center {
+  justify-content: center;
+}
+
+.nav-group a {
+  position: relative;
+
+  color: white;
+
+  text-decoration: none;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  letter-spacing: 1.5px;
+
+  transition: color 0.35s ease;
+}
+
+/* HOVER HEADER */
+
+.header-container:hover .nav-group a {
+  color: #000000;
+}
+
+/* ================================
+   EFECTO DE LÍNEA
+================================ */
+
+.nav-group a::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: -8px;
+
+  width: 0;
+  height: 1px;
+
+  background: #e5c77f;
+
+  transition: width 0.3s ease;
+}
+
+.nav-group a:hover::after {
+  width: 100%;
+}
+
+/* ================================
+   LOGO
+================================ */
+
+.header-logo {
+  position: relative;
+  z-index: 2;
+  width: 250px;
+  height: 105px;
+}
+
+.header-logo a {
+  text-decoration: none;
+
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.header-logo img {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  display: block;
+  width: 250px !important;
+  height: auto !important;
+  max-width: none;
+  transition: opacity 0.28s ease;
+}
+
+.logo-color {
+  opacity: 0;
+}
+
+.header-container:hover .logo-white {
+  opacity: 0;
+}
+
+.header-container:hover .logo-color {
+  opacity: 1;
+}
+
+.logo-main {
+  color: white;
+
+  font-family: Georgia, serif;
+
+  font-size: 39px;
+
+  font-weight: bold;
+
+  font-style: italic;
+
+  line-height: 35px;
+
+  transition: color 0.35s ease;
+}
+
+.logo-sub {
+  color: white;
+
+  font-family: Georgia, serif;
+
+  font-size: 11px;
+
+  letter-spacing: 3px;
+
+  margin-top: 5px;
+
+  transition: color 0.35s ease;
+}
+
+/* LOGO AL HACER HOVER */
+
+.header-container:hover .logo-main {
+  color: #e5c77f;
+}
+
+.header-container:hover .logo-sub {
+  color: #000000;
+}
+
+/* ================================
+   ICONOS DERECHA
+================================ */
+
+.header-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  gap: 25px;
+}
+
+.header-actions a {
+  color: white;
+
+  font-size: 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  text-decoration: none;
+
+  transition:
+    color 0.35s ease,
+    transform 0.25s ease;
+}
+
+/* HOVER HEADER */
+
+.header-container:hover .header-actions a {
+  color: #000000;
+}
+
+.header-actions a:hover {
+  transform: scale(1.15);
+  color: #e5c77f !important;
+}
+
+/* ================================
+   HERO CONTENT
+================================ */
+
+.hero-content {
+  position: relative;
+
+  z-index: 3;
+
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  padding-left: 7%;
+
+  pointer-events: none;
+}
+
+.hero-text {
+  margin-top: 100px;
+
+  color: white;
+}
+
+.hero-text h2 {
+  font-family: Arial, sans-serif;
+
+  font-size: clamp(40px, 5vw, 78px);
+
+  line-height: 0.95;
+
+  margin: 0 0 20px;
+
+  font-weight: 700;
+
+  letter-spacing: -2px;
+}
+
+.hero-text p {
+  font-family: Georgia, serif;
+
+  font-style: italic;
+
+  font-size: 25px;
+
+  margin-bottom: 30px;
+}
+
+.hero-button {
+  display: inline-block;
+
+  pointer-events: auto;
+
+  color: white;
+
+  border: 1px solid white;
+
+  padding: 14px 30px;
+
+  text-decoration: none;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  letter-spacing: 2px;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.hero-buttons {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  gap: 18px;
+  pointer-events: auto;
+}
+
+.reserve-button {
+  color: #111;
+  font-weight: bold;
+  background: white;
+  border-color: white;
+}
+
+.reserve-button:hover {
+  color: #111;
+  background: white;
+  font-weight: bold;
+  border-color: white;
+}
+
+.hero-button:hover {
+  background: white;
+  font-weight: bold;
+  color: #222;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1200px) {
+  .header-inner {
+    padding: 0 30px;
+
+    gap: 20px;
+  }
+
+  .search-bar {
+    width: 200px;
+  }
+
+  .nav-group,
+  .header-right {
+    gap: 20px;
+  }
+
+  .nav-group a {
+    font-size: 13px;
+  }
+
+  .logo-main {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  .header-container {
+    height: 80px;
+  }
+
+  .header-inner {
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 0 25px;
+  }
+
+  .nav-center {
+    display: none;
+  }
+
+  .header-logo {
+    width: 160px;
+    height: 80px;
+  }
+
+  .header-logo img {
+    top: 14px;
+    width: 160px !important;
+    height: auto !important;
+  }
+
+  .header-actions {
+    gap: 18px;
+  }
+
+  .logo-main {
+    font-size: 30px;
+  }
+
+  .hero-text {
+    padding-right: 30px;
+  }
+}
+
+@media (max-width: 500px) {
+  .header-inner {
+    padding: 0 18px;
+  }
+
+  .header-actions {
+    gap: 14px;
+  }
+
+  .header-actions a {
+    font-size: 17px;
+  }
+
+  .logo-main {
+    font-size: 27px;
+  }
+
+  .hero-text h2 {
+    font-size: 42px;
+  }
+
+  .hero-text p {
+    font-size: 19px;
+  }
+
+  .hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    z-index: 0;
+  }
+}

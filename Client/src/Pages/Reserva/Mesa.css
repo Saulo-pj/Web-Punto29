@@ -1,0 +1,129 @@
+.reservation-card--floor .floorplan {
+  min-height: 570px !important;
+  padding: 168px 42px 28px !important;
+  border-radius: 18px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.82),
+    rgba(244, 238, 225, 0.78)
+  ) !important;
+  box-shadow:
+    inset 0 0 0 8px rgba(229, 199, 127, 0.13),
+    0 16px 42px rgba(51, 51, 51, 0.12);
+}
+.reservation-card--floor .floor-events,
+.reservation-card--floor .floor-bath,
+.reservation-card--floor .floor-bar,
+.reservation-card--floor .floor-stairs {
+  border-color: rgba(51, 51, 51, 0.35) !important;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 7px 16px rgba(51, 51, 51, 0.05);
+}
+.reservation-card--floor .floor-events {
+  top: 20px !important;
+  left: 42px !important;
+  width: 50% !important;
+  height: 104px !important;
+  font-size: 15px !important;
+}
+.reservation-card--floor .floor-divider {
+  top: 20px !important;
+  right: 35% !important;
+  height: 168px !important;
+}
+.reservation-card--floor .floor-bath {
+  top: 20px !important;
+  right: 24px !important;
+  width: 27% !important;
+  height: 126px !important;
+  font-size: 23px !important;
+}
+.reservation-card--floor .floor-bar {
+  right: 24px !important;
+  top: 160px !important;
+  width: 20% !important;
+  height: 126px !important;
+  font:
+    500 22px Georgia,
+    serif !important;
+  line-height: 1 !important;
+}
+.reservation-card--floor .floor-stairs {
+  right: 25% !important;
+  bottom: 28px !important;
+  width: 76px !important;
+  height: 152px !important;
+}
+.reservation-card--floor .table-map {
+  grid-template-columns: repeat(10, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(7, 56px) !important;
+  gap: 12px !important;
+}
+.reservation-card--floor .table-group {
+  min-height: 56px !important;
+  filter: drop-shadow(0 5px 5px rgba(51, 51, 51, 0.07));
+}
+.reservation-card--floor .table-group span {
+  border-color: rgba(51, 51, 51, 0.38) !important;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.9) !important;
+  font-size: 23px !important;
+}
+.reservation-card--floor .table-group:hover span {
+  border-color: #e5c77f !important;
+  background: #fff7e1 !important;
+  transform: translateY(-3px);
+}
+.reservation-card--floor .table-group.is-selected span {
+  background: #a7e8bd !important;
+}
+.reservation-card--floor .table-group.is-occupied span {
+  background: #c91d18 !important;
+}
+@media (max-width: 700px) {
+  .reservation-card--floor .floorplan {
+    min-height: 570px !important;
+    padding: 140px 18px 25px !important;
+    border-radius: 12px;
+  }
+  .reservation-card--floor .floor-events {
+    left: 18px !important;
+    width: 43% !important;
+    height: 84px !important;
+    font-size: 11px !important;
+  }
+  .reservation-card--floor .floor-divider {
+    right: 39% !important;
+    height: 125px !important;
+  }
+  .reservation-card--floor .floor-bath {
+    right: 18px !important;
+    width: 34% !important;
+    height: 102px !important;
+    font-size: 17px !important;
+  }
+  .reservation-card--floor .floor-bar {
+    right: 18px !important;
+    top: 135px !important;
+    width: 25% !important;
+    height: 100px !important;
+    font-size: 17px !important;
+  }
+  .reservation-card--floor .floor-stairs {
+    right: 29% !important;
+    bottom: 24px !important;
+    width: 48px !important;
+    height: 126px !important;
+  }
+  .reservation-card--floor .table-map {
+    grid-template-columns: repeat(10, minmax(20px, 1fr)) !important;
+    grid-template-rows: repeat(7, 40px) !important;
+    gap: 8px !important;
+  }
+  .reservation-card--floor .table-group {
+    min-height: 40px !important;
+  }
+  .reservation-card--floor .table-group span {
+    font-size: 16px !important;
+  }
+}
