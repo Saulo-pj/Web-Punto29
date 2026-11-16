@@ -22,7 +22,7 @@ import { AdminFloorEditor } from "./features/reservation/table-selection/AdminFl
 
 function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/historia" element={<Historia />} />

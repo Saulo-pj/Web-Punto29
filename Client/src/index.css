@@ -17,4 +17,26 @@ body,
 
 body {
   overflow-x: hidden;
+  background: #f4eee1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+@media (max-width: 760px) {
+  body {
+    min-width: 0;
+  }
 }

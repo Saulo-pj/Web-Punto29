@@ -1186,6 +1186,15 @@
   .large-group-options {
     grid-template-columns: 1fr;
   }
+
+  .table-selection__map-wrap--venue17 {
+    width: 100%;
+    max-height: 62vh;
+  }
+
+  .table-selection__map-wrap--venue17 .restaurant-floor-plan--venue17 {
+    min-width: 520px;
+  }
 }
 
 .floor-bathroom-divider { stroke: #f4eee1; stroke-opacity: .3; stroke-width: 1; }

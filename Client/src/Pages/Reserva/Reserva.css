@@ -1403,3 +1403,72 @@
 .venue-options strong { font-size: 25px; }
 .venue-options span { font-size: 14px; }
 @media (max-width: 520px) { .venue-options { grid-template-columns: 1fr; } }
+
+@media (max-width: 480px) {
+  .reservation-page {
+    align-items: stretch;
+    padding: 10px;
+  }
+
+  .reservation-card,
+  .reservation-card--flow,
+  .reservation-card--confirmation {
+    width: 100%;
+    min-height: calc(100vh - 20px);
+    max-height: calc(100vh - 20px);
+    border-radius: 14px;
+  }
+
+  .reservation-card__brand {
+    height: 82px;
+    padding: 12px 20px;
+  }
+
+  .reservation-card__brand img {
+    width: 108px;
+  }
+
+  .people-content,
+  .floor-content {
+    padding: 26px 16px 30px;
+  }
+
+  .people-content h1,
+  .floor-content h1 {
+    font-size: clamp(28px, 9vw, 38px);
+  }
+
+  .reservation-summary {
+    justify-content: flex-start;
+  }
+
+  .client-form__grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .client-form__full {
+    grid-column: auto;
+  }
+
+  .reservation-reason__options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .confirmation-scroll {
+    margin-right: -3px;
+    margin-left: -3px;
+    padding-right: 3px;
+    padding-left: 3px;
+  }
+
+  .confirmation-validation {
+    padding: 14px;
+  }
+
+  .confirmation-validation img {
+    width: 150px;
+    height: 150px;
+    flex-basis: 150px;
+  }
+}

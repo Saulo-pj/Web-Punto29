@@ -1,10 +1,11 @@
 const getSlotKey = ({ date, service, time, locationId }) =>
   [date || "", service || "", time || "", locationId || ""].join("|");
 
+// Demo-only availability: it resets when the page is reloaded and is never
+// written to a database or browser storage.
+const reservationsBySlot = {};
+
 export const getReservedTables = async (reservation) => {
-  await Promise.resolve();
-  const stored = sessionStorage.getItem("punto29-reserved-tables");
-  const reservationsBySlot = stored ? JSON.parse(stored) : {};
   return reservationsBySlot[getSlotKey(reservation)] || [];
 };
 
@@ -16,9 +17,6 @@ export const createReservation = async ({ tableIds, ...reservation }) => {
     error.code = "TABLE_CONFLICT";
     throw error;
   }
-  const stored = sessionStorage.getItem("punto29-reserved-tables");
-  const reservationsBySlot = stored ? JSON.parse(stored) : {};
   reservationsBySlot[getSlotKey(reservation)] = [...reserved, ...tableIds];
-  sessionStorage.setItem("punto29-reserved-tables", JSON.stringify(reservationsBySlot));
   return { status: 201, reservation: { ...reservation, tableIds } };
 };

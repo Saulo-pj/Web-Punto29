@@ -2,6 +2,7 @@ import { VENUE17_TABLES } from "../config/venue17.config";
 import { TABLES } from "../config/tables.config";
 import { FIRST_FLOOR_TABLES } from "../config/firstFloor.config";
 const STORAGE_KEY = "punto29-floor-layout-v1";
+const useLayoutDatabase = import.meta.env.VITE_USE_LAYOUT_DATABASE === "true";
 
 export const getFloorLayoutSignature = (floor) => {
   try {
@@ -32,7 +33,7 @@ export const loadFloorLayout = (floor, fallbackTables) => {
 };
 
 export const saveFloorLayout = async (floor, tables) => {
-  await writeDatabase(floor, tables);
+  if (useLayoutDatabase) await writeDatabase(floor, tables);
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
   saved[floor] = Object.fromEntries(tables.map((table) => [
     table.id,
@@ -44,7 +45,9 @@ export const saveFloorLayout = async (floor, tables) => {
 };
 
 export const clearFloorLayout = async (floor) => {
-  await writeDatabase(floor, floor === "venue17" ? VENUE17_TABLES : floor === "first" ? FIRST_FLOOR_TABLES : TABLES);
+  if (useLayoutDatabase) {
+    await writeDatabase(floor, floor === "venue17" ? VENUE17_TABLES : floor === "first" ? FIRST_FLOOR_TABLES : TABLES);
+  }
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
   delete saved[floor];
   delete saved[`${floor}-tables`];
