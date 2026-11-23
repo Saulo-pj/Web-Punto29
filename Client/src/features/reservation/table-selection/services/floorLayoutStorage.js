@@ -2,7 +2,7 @@ import { VENUE17_TABLES } from "../config/venue17.config";
 import { TABLES } from "../config/tables.config";
 import { FIRST_FLOOR_TABLES } from "../config/firstFloor.config";
 const STORAGE_KEY = "punto29-floor-layout-v1";
-const useLayoutDatabase = import.meta.env.VITE_USE_LAYOUT_DATABASE === "true";
+const useLayoutDatabase = import.meta.env.DEV && import.meta.env.VITE_USE_LAYOUT_DATABASE !== "false";
 
 export const getFloorLayoutSignature = (floor) => {
   try {

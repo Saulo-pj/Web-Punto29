@@ -4,10 +4,82 @@
 }
 
 .happy-image {
+  position: relative;
+  height: 610px;
+  overflow: hidden;
+}
+
+.happy-image {
   background:
     linear-gradient(115deg, rgba(51, 51, 51, 0.1), rgba(51, 51, 51, 0.38)),
     url("https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1300&q=90")
       center/cover;
+}
+
+.happy-image__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.happy-image::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, rgba(51, 51, 51, 0.1), rgba(51, 51, 51, 0.38));
+  content: "";
+  pointer-events: none;
+}
+
+.happy-carousel-controls {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.happy-carousel-controls > button,
+.happy-carousel-dots button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(244, 238, 225, 0.8);
+  border-radius: 50%;
+  background: rgba(51, 51, 51, 0.72);
+  color: #f4eee1;
+  cursor: pointer;
+  font: 24px/1 Georgia, serif;
+}
+
+.happy-carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.happy-carousel-dots button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  background: rgba(244, 238, 225, 0.65);
+}
+
+.happy-carousel-dots button.is-active {
+  background: #e5c77f;
+  box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.6);
+}
+
+.happy-carousel-controls button:focus-visible {
+  outline: 2px solid #e5c77f;
+  outline-offset: 3px;
 }
 
 .happy-copy .section-kicker {
@@ -26,6 +98,13 @@
     sans-serif;
   letter-spacing: 1.6px;
   text-transform: uppercase;
+}
+
+.happy-description {
+  max-width: 470px;
+  margin: -12px 0 18px;
+  color: #ddd4c6;
+  font: 14px/1.45 Arial, sans-serif;
 }
 
 .happy-offers {
@@ -69,5 +148,11 @@
 @media (max-width: 480px) {
   .happy-offers {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .happy-image {
+    height: 330px;
   }
 }

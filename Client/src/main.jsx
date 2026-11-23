@@ -6,9 +6,7 @@ import { initializeFloorLayouts } from "./features/reservation/table-selection/s
 
 const root = createRoot(document.getElementById("root"));
 
-// The visual demo must render without a server or database. Enable this only
-// when running the local editor with the SQLite API available.
-const useLayoutDatabase = import.meta.env.VITE_USE_LAYOUT_DATABASE === "true";
+const useLayoutDatabase = import.meta.env.DEV && import.meta.env.VITE_USE_LAYOUT_DATABASE !== "false";
 
 root.render(
   <StrictMode>

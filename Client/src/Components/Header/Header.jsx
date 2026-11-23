@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaUser, FaWhatsapp, FaSearch, FaShoppingCart } from "react-icons/fa";
+import { FaUser, FaWhatsapp, FaShoppingCart } from "react-icons/fa";
+import { useSiteContent } from "../../features/site-content/useSiteContent";
 import logoBlanco from "../../assets/Image/LogoBlanco.png";
 import logoColor from "../../assets/Image/Logo.png";
 import heroVideo from "../../assets/Videos/Barra Punto 29.mp4";
@@ -8,11 +9,15 @@ import heroVideo from "../../assets/Videos/Barra Punto 29.mp4";
 import "./header.css";
 
 const Header = () => {
+  const { content } = useSiteContent();
+  const general = content.general;
+
   return (
     <section className="hero-section">
       <video className="hero-video" autoPlay muted loop playsInline>
         <source src={heroVideo} type="video/mp4" />
       </video>
+      {general.heroImage && <img className="hero-image" src={general.heroImage} alt="" />}
       {/* <img
                 className="hero-image"
                 src="https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkUQl33gdR73cfhuALBcBrnnqoZUzPTKA2PGODlYq673XS8qsGGUtWZGZ0OmXcxsoOIvD22Nb_U5IyZdg-c-e4FvSv9CGjSVMI8SkHO3hV-WjMO3ZZdJktmsgCa4xiCW_upCvHYOxFYzBCd=s1360-w1360-h1020-rw"
@@ -76,12 +81,13 @@ const Header = () => {
       <div className="hero-content">
         <div className="hero-text">
           <h2>
-            SABORES QUE
-            <br />
-            NOS REPRESENTAN
+            {general.heroTitle.split("\n").map((line, index) => (
+              <React.Fragment key={`${line}-${index}`}>{index > 0 && <br />}{line}</React.Fragment>
+            ))}
           </h2>
 
-          <p>Una experiencia que empieza desde el primer momento.</p>
+          <p>{general.heroSubtitle}</p>
+          {general.heroNotice && <p className="hero-notice">{general.heroNotice}</p>}
           <div className="hero-buttons">
             <Link to="/reserva" className="hero-button reserve-button">
               Reserva ahora

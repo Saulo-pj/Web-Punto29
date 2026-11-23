@@ -1,3 +1,4 @@
+import process from "node:process";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -9,8 +10,6 @@ export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
-    ...(command === "serve" && process.env.VITE_USE_LAYOUT_DATABASE === "true"
-      ? [floorLayoutPlugin()]
-      : []),
+    ...(command === "serve" ? [floorLayoutPlugin()] : []),
   ],
 }));

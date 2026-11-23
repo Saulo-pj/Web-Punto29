@@ -4,7 +4,36 @@ import { FIRST_FLOOR_TABLES } from "./config/firstFloor.config";
 import { VENUE17_TABLES } from "./config/venue17.config";
 import { TABLES } from "./config/tables.config";
 import { clearFloorLayout, loadFloorLayout, saveFloorLayout } from "./services/floorLayoutStorage";
+import SiteContentEditor from "../../site-content/SiteContentEditor";
+import { FiArrowLeft, FiBell, FiFileText } from "react-icons/fi";
+import logoBlanco from "../../../assets/Image/LogoBlanco.png";
 import "./table-selection.css";
+
+const TableIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M5 9h14v4H5zM7 13v7m10-7v7M3 11v5m18-5v5" />
+  </svg>
+);
+
+const ChefHatIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M7 12.5h10V20H7zM7 13a3.5 3.5 0 0 1-1.5-6.7 3.8 3.8 0 0 1 7-1.2 3.8 3.8 0 0 1 7 1.2A3.5 3.5 0 0 1 17 13" />
+  </svg>
+);
+
+const CocktailIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 5h16l-8 8-8-8Zm8 8v7m-4 0h8M14 4l5-2" />
+  </svg>
+);
+
+const ADMIN_SECTIONS = [
+  { id: "tables", label: "Editar mesas", Icon: TableIcon },
+  { id: "general", label: "Contenido general", Icon: FiFileText },
+  { id: "recommendations", label: "Platos recomendados", Icon: FiBell },
+  { id: "chefs", label: "Nuestros chefs", Icon: ChefHatIcon },
+  { id: "happyHour", label: "Happy Hour", Icon: CocktailIcon },
+];
 
 const FLOOR_DATA = {
   venue17: { label: "Sede 17", viewBox: "80 30 452 710", tables: VENUE17_TABLES },
@@ -36,6 +65,7 @@ const FLOOR_DATA = {
 };
 
 export const AdminFloorEditor = () => {
+  const [activeTab, setActiveTab] = useState("happyHour");
   const [venue, setVenue] = useState("20");
   const [floor, setFloor] = useState("second");
   const [tables, setTables] = useState(() => loadFloorLayout("second", TABLES));
@@ -183,11 +213,36 @@ export const AdminFloorEditor = () => {
 
 
   return (
-    <main className="admin-floor-editor">
-      <header className="admin-floor-editor__header">
-        <div><p>ADMINISTRACIÓN</p><h1>Editor de mesas</h1></div>
-        <a href={`/reserva/mesa?sede=${venue}`}>Volver a reservas</a>
-      </header>
+    <div className="admin-dashboard">
+      <aside className="admin-sidebar">
+        <div className="admin-sidebar__brand">
+          <p>ADMINISTRACIÓN</p>
+          <img src={logoBlanco} alt="Punto 29" />
+        </div>
+        <nav className="admin-sidebar__menu" aria-label="Secciones de administración">
+          {ADMIN_SECTIONS.map(({ id, label, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              className={activeTab === id ? "is-active" : ""}
+              onClick={() => setActiveTab(id)}
+              aria-current={activeTab === id ? "page" : undefined}
+            >
+              <Icon aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+        <a className="admin-sidebar__back" href={`/reserva/mesa?sede=${venue}`}>
+          <FiArrowLeft aria-hidden="true" />
+          <span>Volver a reservas</span>
+        </a>
+      </aside>
+      <main className="admin-workspace">
+        <div className="admin-floor-editor" hidden={activeTab !== "tables"}>
+          <header className="admin-page-heading">
+            <h1>Editar mesas</h1>
+          </header>
       <div className="admin-floor-editor__toolbar">
         <label>Sede <select value={venue} onChange={(event) => { setVenue(event.target.value); switchFloor(event.target.value === "17" ? "venue17" : "second"); }}><option value="17">Sede 17</option><option value="20">Sede 20</option></select></label>
         {Object.entries(FLOOR_DATA).filter(([id]) => venue === "17" ? id === "venue17" : id !== "venue17").map(([id, value]) => (
@@ -256,6 +311,9 @@ export const AdminFloorEditor = () => {
           </div>
         </aside>
       </div>
-    </main>
+        </div>
+        <SiteContentEditor activeSection={activeTab} hidden={activeTab === "tables"} />
+      </main>
+    </div>
   );
 };

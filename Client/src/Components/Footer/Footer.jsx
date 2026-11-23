@@ -1,10 +1,12 @@
-import React from "react";
 import { FaFacebookF, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa";
+import { useSiteContent } from "../../features/site-content/useSiteContent";
 import logo from "../../assets/Image/Logo.png";
 
 import "./Footer.css";
 
 const Footer = () => {
+  const { content } = useSiteContent();
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -39,7 +41,7 @@ const Footer = () => {
           <p>
             Lunes a domingo
             <br />
-            de 12:00 p. m. a 11:00 p. m.
+            {content.general.footerSchedule}
           </p>
 
           <h3>ATENCIÓN:</h3>

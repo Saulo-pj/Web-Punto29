@@ -23,6 +23,7 @@
 .dish-card {
   position: relative;
   min-height: 430px;
+  height: 430px;
   overflow: hidden;
   background-position: center;
   background-size: cover;
@@ -30,6 +31,15 @@
   transition:
     transform 0.35s ease,
     box-shadow 0.35s ease;
+}
+
+.chef-card__image,
+.dish-card__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .chef-card::after,
@@ -114,5 +124,6 @@
   .chef-card,
   .dish-card {
     min-height: 380px;
+    height: 380px;
   }
 }
