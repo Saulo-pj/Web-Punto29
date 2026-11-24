@@ -89,7 +89,7 @@ export const getTableCapacity = (tableId) => {
 };
 
 export const canTableAcceptParty = (table, partySize) =>
-  table.activa &&
+  Boolean(table?.activa) &&
   (table.tipo !== "small" || partySize <= 2) &&
   (table.tipo !== "family"
     ? table.capacidad >= Math.min(partySize, 4)

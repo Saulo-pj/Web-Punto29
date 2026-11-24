@@ -1,0 +1,20 @@
+.venue-editor fieldset { border: 0; padding: 0; min-width: 0; }
+.venue-editor button { padding: 10px 14px; border: 1px solid #d6c5ab; border-radius: 8px; background: #fff8eb; color: #513e26; cursor: pointer; }
+.venue-editor button:disabled { opacity: .5; cursor: default; }
+.venue-editor button:focus-visible, .venue-map g:focus-visible { outline: 3px solid #bc7d25; outline-offset: 3px; }
+.venue-editor h1 { margin: 20px 0 12px; }
+.venue-workspace aside { padding: 20px; border: 1px solid #e6dfd4; border-radius: 12px; background: white; }
+.venue-workspace label { display: grid; gap: 6px; margin: 12px 0; color: #513e26; }
+.venue-workspace input, .venue-workspace select { min-width: 0; width: 100%; padding: 10px; border: 1px solid #ddd5c8; border-radius: 7px; color: #333; background: #fbfaf7; }
+.venue-editor .phase2-list-item { gap: 8px; }
+.venue-toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; align-items: center; }
+.venue-toolbar button[aria-pressed="true"], .venue-toolbar button[aria-selected="true"] { background: #ad721f; color: white; }
+.venue-workspace { display: grid; grid-template-columns: minmax(0, 2fr) minmax(230px, 1fr); gap: 24px; }
+.venue-map { width: 100%; max-height: 78vh; background: #28251f; border-radius: 14px; touch-action: none; }
+.venue-map g[role="button"] { cursor: grab; }
+.venue-map text { pointer-events: none; font-size: 15px; }
+.venue-product-image { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; }
+.venue-skeleton { height: 80px; border-radius: 12px; margin: 12px 0; background: linear-gradient(90deg,#292929,#484238,#292929); background-size: 200% 100%; animation: venue-pulse 1.4s ease-in-out infinite; }
+@keyframes venue-pulse { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .venue-skeleton { animation: none; } }
+@media (max-width: 760px) { .venue-workspace { grid-template-columns: 1fr; } }

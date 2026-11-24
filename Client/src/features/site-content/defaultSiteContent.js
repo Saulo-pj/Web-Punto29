@@ -116,4 +116,24 @@ export const DEFAULT_SITE_CONTENT = {
       },
     ],
   },
+  reviews: {
+    kicker: "Lo que dicen de nosotros",
+    title: "Reseñas de nuestros clientes",
+  },
+  gallery: {
+    eyebrow: "Archivo visual · Punto 29",
+    titleFirst: "Una galería",
+    titleSecond: "para recordar.",
+    introTitle: "Momentos servidos",
+    introSecond: "con intención.",
+    introDescription: "Un recorrido por nuestra cocina, nuestra gente y la energía de cada visita.",
+    items: [
+      { id: "gallery-1", title: "El restaurante", category: "Ambiente", className: "gallery-card--wide", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=90" },
+      { id: "gallery-2", title: "Sabores del mar", category: "Especialidades", className: "gallery-card--tall", image: "https://images.unsplash.com/photo-1535400255456-984241443b29?auto=format&fit=crop&w=1400&q=90" },
+      { id: "gallery-3", title: "Momentos Punto 29", category: "Experiencias", className: "", image: "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1200&q=90" },
+      { id: "gallery-4", title: "Nuestra mesa", category: "Detalles", className: "", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=90" },
+      { id: "gallery-5", title: "Cocina peruana", category: "Tradición", className: "gallery-card--wide", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=90" },
+      { id: "gallery-6", title: "Noches para compartir", category: "Bar & coctelería", className: "", image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=1200&q=90" },
+    ],
+  },
 };

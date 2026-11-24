@@ -7,7 +7,17 @@ const CONTENT_UPDATED_EVENT = "punto29-site-content-updated";
 const readSiteContent = async () => {
   const response = await fetch("/api/site-content", { cache: "no-store" });
   if (!response.ok) throw new Error("No se pudo cargar el contenido del sitio.");
-  return response.json();
+  const stored = await response.json();
+  return {
+    ...DEFAULT_SITE_CONTENT,
+    ...stored,
+    general: { ...DEFAULT_SITE_CONTENT.general, ...stored.general },
+    recommendations: { ...DEFAULT_SITE_CONTENT.recommendations, ...stored.recommendations },
+    chefs: { ...DEFAULT_SITE_CONTENT.chefs, ...stored.chefs },
+    happyHour: { ...DEFAULT_SITE_CONTENT.happyHour, ...stored.happyHour },
+    reviews: { ...DEFAULT_SITE_CONTENT.reviews, ...stored.reviews },
+    gallery: { ...DEFAULT_SITE_CONTENT.gallery, ...stored.gallery },
+  };
 };
 
 export const SiteContentProvider = ({ children }) => {

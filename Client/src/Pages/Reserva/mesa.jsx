@@ -15,6 +15,7 @@ const Mesa = () => {
   const onComplete = ({ tableIds, specialConfigId }) => {
     const nextParams = new URLSearchParams(params);
     nextParams.set("mesa", tableIds.join("-") || specialConfigId);
+    nextParams.set('mesas',JSON.stringify(tableIds));
     if (specialConfigId) nextParams.set("configuracion", specialConfigId);
     navigate(`/reserva/datos-cliente?${nextParams.toString()}`);
   };

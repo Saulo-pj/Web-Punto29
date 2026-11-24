@@ -6,9 +6,8 @@ const locations = [
     name: "Sede 20",
     address:
       "Av. Próceres de la Independencia, Alt. Paradero 20, San Juan de Lurigancho 15434",
-    url: "https://maps.app.goo.gl/5Ge9xQSDZvcWqiQw5",
-    mapQuery:
-      "Av. Próceres de la Independencia, Alt. Paradero 20, San Juan de Lurigancho 15434",
+    url: "https://www.google.com/maps/place/Punto29-Sede20/@-11.9891152,-77.0106989,17z",
+    mapQuery: "-11.9891152,-77.0106989",
   },
   {
     name: "Sede 17",
@@ -48,7 +47,7 @@ const Ubicacion = () => {
           <div className="locations-map" key={location.name}>
             <iframe
               title={`Mapa de ${location.name}`}
-              src={`https://www.google.com/maps?q=${encodeURIComponent(location.mapQuery)}&z=15&output=embed`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(location.mapQuery)}&z=16&output=embed&iwloc=A`}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />

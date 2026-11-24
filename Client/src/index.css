@@ -21,6 +21,54 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+:root {
+  --punto29-display: Georgia, "Times New Roman", serif;
+  --punto29-body: Arial, Helvetica, sans-serif;
+  --punto29-accent: #e5c77f;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+.locations-section,
+.reservation-page,
+.gallery-page {
+  font-family: var(--punto29-body);
+}
+
+h1,
+h2,
+h3,
+.hero-text h2,
+.locations-content h2,
+.location-card h3,
+.delivery-copy h2,
+.happy-copy h2,
+.review-card h3,
+.reservation-card h1,
+.gallery-hero h1,
+.gallery-intro h2,
+.gallery-card h3 {
+  font-family: var(--punto29-display);
+}
+
+.hero-button,
+.reviews-add,
+.reviews-form button,
+.delivery-copy a,
+.location-detail a,
+.happy-copy a,
+.reservation-start,
+.reservation-card small,
+.gallery-card__copy span,
+.gallery-card__copy b,
+.map-label,
+.section-kicker,
+.locations-eyebrow {
+  font-family: var(--punto29-body);
+}
 
 button,
 input,

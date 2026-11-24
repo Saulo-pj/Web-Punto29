@@ -2,7 +2,7 @@ import process from "node:process";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { floorLayoutPlugin } from "./server/floorLayoutPlugin.js";
+import { postgresPlugin } from "./server/postgresPlugin.js";
 
 // https://vite.dev/config/
 export default defineConfig(({ command }) => ({
@@ -10,6 +10,6 @@ export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
-    ...(command === "serve" ? [floorLayoutPlugin()] : []),
+    ...(command === "serve" ? [postgresPlugin()] : []),
   ],
 }));

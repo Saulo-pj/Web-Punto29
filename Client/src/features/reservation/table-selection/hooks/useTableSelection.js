@@ -7,6 +7,7 @@ import {
   isSelectionComplete,
 } from "../domain/tableRules";
 import { getReservedTables } from "../services/reservationsApi";
+import { subscribeOperations } from '../../../operations/api';
 
 const initialState = { selection: [], orientation: null, specialConfigId: null, noticeAcknowledged: false, message: "" };
 
@@ -53,6 +54,7 @@ export const useTableSelection = (reservation, floorConfig = null) => {
     dispatch({ type: "RESET" });
     refresh();
   }, [refresh, floorConfig]);
+  useEffect(()=>subscribeOperations(refresh),[refresh]);
 
   const validNextIds = useMemo(
     () => getValidNextTables(state.selection, partySize, availability.reservedIds, floorConfig),

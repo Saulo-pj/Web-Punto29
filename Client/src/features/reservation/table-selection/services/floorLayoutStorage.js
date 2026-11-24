@@ -2,7 +2,7 @@ import { VENUE17_TABLES } from "../config/venue17.config";
 import { TABLES } from "../config/tables.config";
 import { FIRST_FLOOR_TABLES } from "../config/firstFloor.config";
 const STORAGE_KEY = "punto29-floor-layout-v1";
-const useLayoutDatabase = import.meta.env.DEV && import.meta.env.VITE_USE_LAYOUT_DATABASE !== "false";
+const useLayoutDatabase = true;
 
 export const getFloorLayoutSignature = (floor) => {
   try {
@@ -106,35 +106,16 @@ export const subscribeFloorLayout = (onChange) => {
 
 const writeDatabase = async (floor, tables, onlyIfMissing = false) => {
   const response = await fetch("/api/floor-layouts", {
-    method: "PUT", headers: { "Content-Type": "application/json" },
+    method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${JSON.parse(localStorage.getItem("punto29-admin-session") || "null")?.token || ""}` },
     body: JSON.stringify({ floor, tables, onlyIfMissing }),
   });
-  if (!response.ok) throw new Error("No se pudo guardar el plano en la base de datos.");
+  if (!response.ok) { const error = await response.json(); throw new Error(error.error || "No se pudo guardar el plano en la base de datos."); }
 };
 
 export const initializeFloorLayouts = async () => {
-  let response = await fetch("/api/floor-layouts", { cache: "no-store" });
-  if (!response.ok) throw new Error("Base de datos no disponible");
-  const existing = await response.json();
-  for (const [floor, defaults] of [["first", FIRST_FLOOR_TABLES], ["second", TABLES], ["venue17", VENUE17_TABLES]]) {
-    if (!existing[floor]) await writeDatabase(floor, loadFloorLayout(floor, defaults), true);
-  }
-  response = await fetch("/api/floor-layouts", { cache: "no-store" });
-  if (!response.ok) throw new Error("No se pudo cargar el plano");
-  const layouts = await response.json();
-  const venue17CapacityById = Object.fromEntries(VENUE17_TABLES.map((table) => [table.id, table.capacidad]));
-  const normalizedLayouts = {
-    ...layouts,
-    venue17: Array.isArray(layouts.venue17)
-      ? layouts.venue17.map((table) => ({
-        ...table,
-        capacidad: venue17CapacityById[table.id] ?? table.capacidad,
-      }))
-      : layouts.venue17,
-  };
-  if (JSON.stringify(normalizedLayouts.venue17) !== JSON.stringify(layouts.venue17)) {
-    await writeDatabase("venue17", normalizedLayouts.venue17);
-  }
+  const response = await fetch("/api/floor-layouts", { cache: "no-store" });
+  if (!response.ok) throw new Error("No se pudo cargar el croquis desde PostgreSQL.");
+  const normalizedLayouts = await response.json();
   let saved;
   try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { saved = {}; }
   for (const [floor, tables] of Object.entries(normalizedLayouts)) {

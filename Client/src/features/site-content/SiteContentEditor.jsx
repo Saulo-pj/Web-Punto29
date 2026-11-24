@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FiAlignLeft,
   FiArrowDown,
@@ -27,6 +27,8 @@ const SECTIONS = [
   ["recommendations", "Platos recomendados"],
   ["chefs", "Nuestros chefs"],
   ["happyHour", "Happy Hour"],
+  ["gallery", "Galería para recordar"],
+  ["reviews", "Reseñas y moderación"],
 ];
 
 const SECTION_TITLES = Object.fromEntries(SECTIONS);
@@ -140,8 +142,19 @@ const SiteContentEditor = ({ activeSection, hidden = false }) => {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [customerReviews, setCustomerReviews] = useState([]);
+  const [reviewError, setReviewError] = useState("");
 
   const draft = dirty ? draftState : content;
+
+  useEffect(() => {
+    if (activeSection !== "reviews") return undefined;
+    fetch("/api/customer-reviews", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("No se pudieron cargar las reseñas.")))
+      .then(setCustomerReviews)
+      .catch((loadError) => setReviewError(loadError.message));
+    return undefined;
+  }, [activeSection]);
 
   const edit = (update) => {
     setDraftState((current) => update(clone(current)));
@@ -255,6 +268,50 @@ const SiteContentEditor = ({ activeSection, hidden = false }) => {
       [next.happyHour.slides[target], next.happyHour.slides[index]];
     return next;
   });
+
+  const updateGalleryItem = (id, key, value) => edit((next) => {
+    next.gallery.items = next.gallery.items.map((item) => item.id === id ? { ...item, [key]: value } : item);
+    return next;
+  });
+
+  const moveGalleryItem = (index, direction) => edit((next) => {
+    const target = index + direction;
+    if (target >= 0 && target < next.gallery.items.length) {
+      [next.gallery.items[index], next.gallery.items[target]] =
+        [next.gallery.items[target], next.gallery.items[index]];
+    }
+    return next;
+  });
+
+  const updateReview = async (id, payload) => {
+    setReviewError("");
+    try {
+      const response = await fetch("/api/customer-reviews", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...payload }),
+      });
+      if (!response.ok) throw new Error("No se pudo actualizar la reseña.");
+      setCustomerReviews((current) => current.map((review) => review.id === id ? { ...review, ...payload } : review));
+    } catch (updateError) {
+      setReviewError(updateError.message);
+    }
+  };
+
+  const removeReview = async (id) => {
+    if (!window.confirm("¿Eliminar esta reseña y su foto?")) return;
+    try {
+      const response = await fetch("/api/customer-reviews", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) throw new Error("No se pudo eliminar la reseña.");
+      setCustomerReviews((current) => current.filter((review) => review.id !== id));
+    } catch (deleteError) {
+      setReviewError(deleteError.message);
+    }
+  };
 
   const general = draft.general;
 
@@ -428,6 +485,81 @@ const SiteContentEditor = ({ activeSection, hidden = false }) => {
             </section>
           ))}
           <button type="button" className="site-content-add" onClick={addSlide}><FiPlus aria-hidden="true" />Agregar diapositiva</button>
+        </div>
+      )}
+
+      {activeSection === "gallery" && (
+        <div className="site-content-form site-content-form--items">
+          <section className="site-content-card">
+            <h2>Encabezados de la galería</h2>
+            <TextField label="Antetítulo" value={draft.gallery.eyebrow} onChange={(value) => edit((next) => { next.gallery.eyebrow = value; return next; })} />
+            <TextField label="Título, primera línea" value={draft.gallery.titleFirst} onChange={(value) => edit((next) => { next.gallery.titleFirst = value; return next; })} />
+            <TextField label="Título destacado" value={draft.gallery.titleSecond} onChange={(value) => edit((next) => { next.gallery.titleSecond = value; return next; })} />
+            <TextField label="Título de introducción" value={draft.gallery.introTitle} onChange={(value) => edit((next) => { next.gallery.introTitle = value; return next; })} />
+            <TextField label="Título destacado secundario" value={draft.gallery.introSecond} onChange={(value) => edit((next) => { next.gallery.introSecond = value; return next; })} />
+            <TextField label="Descripción" value={draft.gallery.introDescription} onChange={(value) => edit((next) => { next.gallery.introDescription = value; return next; })} multiline />
+          </section>
+          {draft.gallery.items.map((item, index) => (
+            <section className="site-content-card site-content-card--item" key={item.id}>
+              <div className="site-content-card-heading">
+                <h2>Imagen {index + 1}</h2>
+                <ItemActions
+                  index={index}
+                  count={draft.gallery.items.length}
+                  minimum={1}
+                  label={`imagen ${index + 1}`}
+                  onMove={(direction) => moveGalleryItem(index, direction)}
+                  onRemove={() => edit((next) => { next.gallery.items = next.gallery.items.filter((entry) => entry.id !== item.id); return next; })}
+                />
+              </div>
+              <div className="site-content-card__body">
+                <ImageField label="Imagen de la galería" value={item.image} onChange={(value) => updateGalleryItem(item.id, "image", value)} recommendation="Dimensión recomendada: 1200 × 900 px" ratio="landscape" />
+                <div className="site-content-card__fields">
+                  <TextField label="Título" value={item.title} onChange={(value) => updateGalleryItem(item.id, "title", value)} />
+                  <TextField label="Sector o categoría" value={item.category} onChange={(value) => updateGalleryItem(item.id, "category", value)} />
+                  <TextField label="Formato visual (ej. gallery-card--wide)" value={item.className} onChange={(value) => updateGalleryItem(item.id, "className", value)} />
+                </div>
+              </div>
+            </section>
+          ))}
+          <button type="button" className="site-content-add" onClick={() => edit((next) => { next.gallery.items.push({ id: newId("gallery"), title: "Nueva imagen", category: "Experiencias", className: "", image: "" }); return next; })}>
+            <FiPlus aria-hidden="true" />Agregar imagen
+          </button>
+        </div>
+      )}
+
+      {activeSection === "reviews" && (
+        <div className="site-content-form site-content-form--items">
+          <section className="site-content-card">
+            <h2>Encabezado de reseñas</h2>
+            <TextField label="Antetítulo" value={draft.reviews.kicker} onChange={(value) => edit((next) => { next.reviews.kicker = value; return next; })} />
+            <TextField label="Título" value={draft.reviews.title} onChange={(value) => edit((next) => { next.reviews.title = value; return next; })} />
+          </section>
+          {reviewError && <p className="site-content-error" role="alert">{reviewError}</p>}
+          {customerReviews.map((review) => (
+            <section className="site-content-card site-content-card--item" key={review.id}>
+              <div className="site-content-card-heading">
+                <h2>{review.name}</h2>
+                <div className="site-content-item-actions">
+                  <button type="button" onClick={() => updateReview(review.id, { status: "approved" })} disabled={review.status === "approved"}><FiSave aria-hidden="true" /><span>Aprobar</span></button>
+                  <button type="button" onClick={() => updateReview(review.id, { status: "hidden" })} disabled={review.status === "hidden"}><FiRotateCcw aria-hidden="true" /><span>Ocultar</span></button>
+                  <button type="button" onClick={() => removeReview(review.id)}><FiTrash2 aria-hidden="true" /><span>Eliminar</span></button>
+                </div>
+              </div>
+              <div className="site-content-card__body">
+                {review.photo && <div className="site-content-preview site-content-preview--landscape"><img src={review.photo} alt={`Experiencia de ${review.name}`} /></div>}
+                <div className="site-content-card__fields">
+                  <TextField label="Nombre" value={review.name} onChange={(value) => setCustomerReviews((current) => current.map((item) => item.id === review.id ? { ...item, name: value } : item))} />
+                  <TextField label="Calificación" value={String(review.rating)} onChange={(value) => setCustomerReviews((current) => current.map((item) => item.id === review.id ? { ...item, rating: Number(value) } : item))} />
+                  <TextField label="Comentario" value={review.comment} onChange={(value) => setCustomerReviews((current) => current.map((item) => item.id === review.id ? { ...item, comment: value } : item))} multiline />
+                  <button type="button" className="site-content-save" onClick={() => updateReview(review.id, { name: review.name, rating: review.rating, comment: review.comment, photo: review.photo })}>
+                    <FiSave aria-hidden="true" />Guardar cambios
+                  </button>
+                  <p>Estado: {review.status === "approved" ? "Aprobada" : review.status === "hidden" ? "Oculta" : "Pendiente"}</p>
+                </div>
+              </div>
+            </section>
+          ))}
         </div>
       )}
     </section>

@@ -59,7 +59,10 @@
 }
 
 .confirmation {
+  width: 100%;
   max-width: 590px;
+  max-width: 100%;
+  overflow-x: hidden;
   margin: auto;
 }
 
@@ -87,8 +90,23 @@
   background: #56a66b;
   color: white;
   box-shadow: 0 8px 20px rgba(43, 108, 61, 0.25);
-  font-size: 40px;
-  font-weight: 700;
+}
+.confirmation-check svg {
+  width: 52px;
+  height: 52px;
+  animation: confirmationCheckDraw 900ms ease-out both;
+}
+.confirmation-check svg path {
+  stroke-dasharray: 35;
+  stroke-dashoffset: 35;
+  animation: confirmationCheckDrawLine 700ms 240ms ease-out forwards;
+}
+@keyframes confirmationCheckDraw {
+  from { opacity: 0; transform: scale(.72); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes confirmationCheckDrawLine {
+  to { stroke-dashoffset: 0; }
 }
 
 .confirmation-summary {
@@ -1392,16 +1410,35 @@
 .venue-options a {
   display: grid;
   gap: 12px;
-  padding: 28px 20px;
+  padding: 0 0 20px;
+  overflow: hidden;
   border: 1px solid #c99f45;
   border-radius: 10px;
   background: #fff7e1;
   color: #333;
   text-decoration: none;
+  transition: transform 300ms ease, box-shadow 300ms ease, background 300ms ease;
 }
-.venue-options a:hover, .venue-options a:focus-visible { background: #e5c77f; }
-.venue-options strong { font-size: 25px; }
-.venue-options span { font-size: 14px; }
+.venue-options a:hover, .venue-options a:focus-visible {
+  transform: translateY(-4px);
+  background: #e5c77f;
+  box-shadow: 0 14px 30px rgba(51,51,51,.16);
+}
+.venue-options strong {
+  padding: 2px 20px 0;
+  font: 500 25px Georgia, serif;
+}
+.venue-options span {
+  padding: 0 20px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.venue-option img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
 @media (max-width: 520px) { .venue-options { grid-template-columns: 1fr; } }
 
 @media (max-width: 480px) {

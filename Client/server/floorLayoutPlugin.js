@@ -10,6 +10,7 @@ export function openLayoutDatabase(filename) {
   const db = new DatabaseSync(filename);
   db.exec("CREATE TABLE IF NOT EXISTS floor_layouts (floor TEXT PRIMARY KEY, tables_json TEXT NOT NULL)");
   db.exec("CREATE TABLE IF NOT EXISTS site_content (id INTEGER PRIMARY KEY CHECK (id = 1), content_json TEXT NOT NULL)");
+  db.exec("CREATE TABLE IF NOT EXISTS customer_reviews (id TEXT PRIMARY KEY, name TEXT NOT NULL, rating INTEGER NOT NULL, comment TEXT NOT NULL, photo TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', created_at TEXT NOT NULL)");
   return db;
 }
 
@@ -27,8 +28,8 @@ const hasUniqueIds = (items) => items.every((item) => isRecord(item) && typeof i
 
 export const isValidSiteContent = (content) => {
   if (!isRecord(content)) return false;
-  const { general, recommendations, chefs, happyHour } = content;
-  if (![general, recommendations, chefs, happyHour].every(isRecord)) return false;
+  const { general, recommendations, chefs, happyHour, reviews, gallery } = content;
+  if (![general, recommendations, chefs, happyHour, reviews, gallery].every(isRecord)) return false;
   if (![
     "heroTitle", "heroSubtitle", "heroNotice", "aboutKicker", "aboutTitleFirst", "aboutTitleSecond",
     "aboutDescription", "aboutFollowup", "locationsEyebrow", "locationsTitle", "openingDays",
@@ -51,6 +52,11 @@ export const isValidSiteContent = (content) => {
         !isText(slide.title) || !isText(slide.emphasis) || !isText(slide.schedule) ||
         !isText(slide.description) || !Array.isArray(slide.offers) || slide.offers.length > 12 ||
         slide.offers.some((offer) => !isRecord(offer) || !isText(offer.price) || !isText(offer.details)))) return false;
+  if (!isText(reviews.kicker) || !isText(reviews.title)) return false;
+  if (!["eyebrow", "titleFirst", "titleSecond", "introTitle", "introSecond", "introDescription"].every((key) => isText(gallery[key])) ||
+      !Array.isArray(gallery.items) || gallery.items.length > 100 || !hasUniqueIds(gallery.items) ||
+      gallery.items.some((item) => !isRecord(item) || !isText(item.title) || !isText(item.category) ||
+        !isText(item.className) || !isRequiredImage(item.image))) return false;
   return true;
 };
 
@@ -120,6 +126,68 @@ export function floorLayoutPlugin() {
       } catch (error) {
         if (error instanceof SyntaxError) return reply(400, { error: "El contenido enviado no es JSON válido." });
         return reply(500, { error: "No se pudo guardar el contenido en SQLite." });
+      }
+    });
+    server.middlewares.use("/api/customer-reviews", async (req, res) => {
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Cache-Control", "no-store");
+      const reply = (status, body) => { res.statusCode = status; res.end(JSON.stringify(body)); };
+      const readBody = async () => {
+        const chunks = [];
+        let bodySize = 0;
+        for await (const chunk of req) {
+          const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+          bodySize += buffer.length;
+          if (bodySize > 12_000_000) throw new Error("payload");
+          chunks.push(buffer);
+        }
+        return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+      };
+      try {
+        if (req.method === "GET") {
+          const local = isLocalRequest(req);
+          const rows = local
+            ? db.prepare("SELECT * FROM customer_reviews ORDER BY created_at DESC").all()
+            : db.prepare("SELECT * FROM customer_reviews WHERE status = 'approved' ORDER BY created_at DESC").all();
+          return reply(200, rows.map((row) => ({
+            id: row.id, name: row.name, rating: row.rating, comment: row.comment,
+            photo: row.photo, status: row.status, createdAt: row.created_at,
+          })));
+        }
+        if (req.method === "POST") {
+          const review = await readBody();
+          if (!isText(review.name) || !isText(review.comment) || !Number.isInteger(review.rating) ||
+              review.rating < 1 || review.rating > 5 ||
+              (review.photo && !isImageSource(review.photo))) return reply(400, { error: "Revisa los datos de la reseña." });
+          if (!review.name.trim() || !review.comment.trim()) return reply(400, { error: "El nombre y el comentario son obligatorios." });
+          const id = `review-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+          db.prepare("INSERT INTO customer_reviews (id, name, rating, comment, photo, status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', ?)")
+            .run(id, review.name.trim(), review.rating, review.comment.trim(), isText(review.photo) ? review.photo : "", new Date().toISOString());
+          return reply(201, { saved: true, id });
+        }
+        if (!isLocalRequest(req)) return reply(403, { error: "Acción disponible solo desde el administrador local." });
+        if (req.method === "PATCH") {
+          const update = await readBody();
+          if (!isText(update.id)) return reply(400, { error: "ID no válido." });
+          if (update.status && ["pending", "approved", "hidden"].includes(update.status)) {
+            db.prepare("UPDATE customer_reviews SET status = ? WHERE id = ?").run(update.status, update.id);
+          }
+          if (typeof update.name === "string" && typeof update.comment === "string" && Number.isInteger(update.rating)) {
+            db.prepare("UPDATE customer_reviews SET name = ?, rating = ?, comment = ?, photo = ? WHERE id = ?")
+              .run(update.name, update.rating, update.comment, update.photo || "", update.id);
+          }
+          return reply(200, { saved: true });
+        }
+        if (req.method === "DELETE") {
+          const removal = await readBody();
+          db.prepare("DELETE FROM customer_reviews WHERE id = ?").run(removal.id);
+          return reply(200, { saved: true });
+        }
+        return reply(405, { error: "Method not allowed" });
+      } catch (error) {
+        if (error.message === "payload") return reply(413, { error: "La imagen supera el límite permitido." });
+        if (error instanceof SyntaxError) return reply(400, { error: "JSON no válido." });
+        return reply(500, { error: "No se pudo procesar la reseña." });
       }
     });
   };

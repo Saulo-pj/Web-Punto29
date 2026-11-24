@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Pages/Home";
 import Historia from "./Pages/Historia";
 import Carta from "./Pages/Carta/Carta";
@@ -19,6 +19,13 @@ import Register from "./Pages/Register";
 import Gallery from "./Pages/Gallery";
 import { AdminFloorEditor } from "./features/reservation/table-selection/AdminFloorEditor";
 import { SiteContentProvider } from "./features/site-content/SiteContentContext";
+import { DeliveryShop } from './features/operations/Shop';
+
+const ProtectedAdmin = () => {
+  let session = null;
+  try { session = JSON.parse(localStorage.getItem("punto29-admin-session") || "null"); } catch { session = null; }
+  return session?.token ? <AdminFloorEditor /> : <Navigate to="/login" replace />;
+};
 
 function App() {
   return (
@@ -28,6 +35,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/historia" element={<Historia />} />
           <Route path="/carta" element={<Carta />} />
+          <Route path="/delivery" element={<DeliveryShop />} />
           <Route path="/carta/dia" element={<TurDia />} />
           <Route path="/carta/noche" element={<TurNoche />} />
           <Route path="/carta/tragos" element={<Tragos />} />
@@ -38,7 +46,7 @@ function App() {
           <Route path="/reserva/turno-hora" element={<RequireSede><TurnoHora /></RequireSede>} />
           <Route path="/reserva/datos-cliente" element={<RequireSede><DatosCliente /></RequireSede>} />
           <Route path="/reserva/confirmacion" element={<RequireSede><Confirmacion /></RequireSede>} />
-          <Route path="/admin/mesas" element={<AdminFloorEditor />} />
+          <Route path="/admin/mesas" element={<ProtectedAdmin />} />
           <Route path="/trabaja-con-nosotros" element={<Trabajanosotros />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

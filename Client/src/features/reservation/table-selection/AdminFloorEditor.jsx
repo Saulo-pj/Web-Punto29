@@ -5,8 +5,12 @@ import { VENUE17_TABLES } from "./config/venue17.config";
 import { TABLES } from "./config/tables.config";
 import { clearFloorLayout, loadFloorLayout, saveFloorLayout } from "./services/floorLayoutStorage";
 import SiteContentEditor from "../../site-content/SiteContentEditor";
-import { FiArrowLeft, FiBell, FiFileText } from "react-icons/fi";
+import { FiArrowLeft, FiBell, FiCamera, FiFileText, FiGift, FiGlobe, FiGrid, FiLock, FiMessageSquare, FiUserPlus } from "react-icons/fi";
 import logoBlanco from "../../../assets/Image/LogoBlanco.png";
+import { SedesPanel, UsersPanel, SecurityPanel } from "../../admin/AdminPhase2Panels";
+import { CourtesyPanel, QrVerificationPanel } from "../../admin/AdminOperationsPanel";
+import { LiveTables } from '../../operations/LiveTables';
+import { WaitingList, Inventory, OnlineOrders } from '../../operations/AdminCommerce';
 import "./table-selection.css";
 
 const TableIcon = () => (
@@ -29,10 +33,21 @@ const CocktailIcon = () => (
 
 const ADMIN_SECTIONS = [
   { id: "tables", label: "Editar mesas", Icon: TableIcon },
+  { id: "venues", label: "Sedes y Cartas", Icon: FiGlobe },
+  { id: "liveTables", label: "Mesas en Vivo", Icon: TableIcon },
+  { id: 'waitingList', label: 'Lista de Espera', Icon: FiUserPlus },
+  { id: 'inventory', label: 'Carta Virtual e Inventario', Icon: FiFileText },
+  { id: 'orders', label: 'Pedidos y Preórdenes', Icon: FiBell },
+  { id: "users", label: "Usuarios y Permisos", Icon: FiUserPlus },
+  { id: "courtesies", label: "Cortesías Cumpleaños", Icon: FiGift },
+  { id: "qr", label: "Verificar Reserva (QR)", Icon: FiCamera },
+  { id: "security", label: "Mi Cuenta / Seguridad", Icon: FiLock },
   { id: "general", label: "Contenido general", Icon: FiFileText },
   { id: "recommendations", label: "Platos recomendados", Icon: FiBell },
   { id: "chefs", label: "Nuestros chefs", Icon: ChefHatIcon },
   { id: "happyHour", label: "Happy Hour", Icon: CocktailIcon },
+  { id: "gallery", label: "Galería para recordar", Icon: FiGrid },
+  { id: "reviews", label: "Reseñas y moderación", Icon: FiMessageSquare },
 ];
 
 const FLOOR_DATA = {
@@ -65,7 +80,10 @@ const FLOOR_DATA = {
 };
 
 export const AdminFloorEditor = () => {
-  const [activeTab, setActiveTab] = useState("happyHour");
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    return ADMIN_SECTIONS.some(section => section.id === tab) ? tab : 'happyHour';
+  });
   const [venue, setVenue] = useState("20");
   const [floor, setFloor] = useState("second");
   const [tables, setTables] = useState(() => loadFloorLayout("second", TABLES));
@@ -312,7 +330,19 @@ export const AdminFloorEditor = () => {
         </aside>
       </div>
         </div>
-        <SiteContentEditor activeSection={activeTab} hidden={activeTab === "tables"} />
+        <SiteContentEditor
+          activeSection={activeTab}
+          hidden={!["general", "recommendations", "chefs", "happyHour", "gallery", "reviews"].includes(activeTab)}
+        />
+        {activeTab === "venues" && <SedesPanel />}
+        {activeTab === 'liveTables' && <LiveTables />}
+        {activeTab === 'waitingList' && <WaitingList />}
+        {activeTab === 'inventory' && <Inventory />}
+        {activeTab === 'orders' && <OnlineOrders />}
+        {activeTab === "users" && <UsersPanel />}
+        {activeTab === "security" && <SecurityPanel />}
+        {activeTab === "courtesies" && <CourtesyPanel />}
+        {activeTab === "qr" && <QrVerificationPanel />}
       </main>
     </div>
   );

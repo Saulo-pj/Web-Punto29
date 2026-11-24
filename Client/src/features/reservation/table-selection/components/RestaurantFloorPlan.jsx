@@ -61,7 +61,7 @@ const Table = memo(({ table, status, onSelect, splitFamily, selection, reservedI
     );
   }
 
-  const displayId = table.piso === "first" ? table.numero : table.id;
+  const displayId = table.displayLabel ?? (table.piso === "first" ? table.numero : table.id);
   const label = `Mesa ${displayId}, ${table.zona}, ${status.reason.toLowerCase()}, capacidad ${table.capacidad} personas`;
   return (
     <g
@@ -76,7 +76,7 @@ const Table = memo(({ table, status, onSelect, splitFamily, selection, reservedI
       onKeyDown={handleKeyDown}
       transform={`translate(${table.x} ${table.y})`}
     >
-      <rect className="floor-table__shape" x={-table.ancho / 2} y={-table.alto / 2} width={table.ancho} height={table.alto} rx="8" transform={`rotate(${table.rotacion})`} />
+      <rect className="floor-table__shape" x={-table.ancho / 2} y={-table.alto / 2} width={table.ancho} height={table.alto} rx={table.forma === 'redonda' ? Math.min(table.ancho, table.alto) / 2 : 8} transform={`rotate(${table.rotacion})`} />
       {table.tipo === "family" && <title>Mesa familiar {table.id}, capacidad 8 personas</title>}
       {status.status === "selected" && <text className="floor-table__check" x={Math.min(table.ancho / 2, 22) - 2} y={-Math.min(table.alto / 2, 16) + 3}>✓</text>}
       <text className="floor-table__label" y={table.tipo === "family" ? -3 : 0} textAnchor="middle" dominantBaseline="middle">
@@ -89,6 +89,7 @@ const Table = memo(({ table, status, onSelect, splitFamily, selection, reservedI
 export const RestaurantFloorPlan = ({ statuses, onSelect, partySize, selection = [], reservedIds = [], floorConfig = null, tables = TABLES }) => {
   const [showWholeFloor, setShowWholeFloor] = useState(false);
   const [showWholeSecondFloor, setShowWholeSecondFloor] = useState(false);
+  if (floorConfig?.generic) return <div className="table-selection__map-wrap"><svg className="restaurant-floor-plan" viewBox="0 0 632 884" role="group" aria-label="Croquis de la sede seleccionada">{tables.map(table => <Table key={table.id} table={table} status={statuses[table.id]} onSelect={onSelect} selection={selection} reservedIds={reservedIds} />)}</svg></div>;
   if (floorConfig?.id === "venue17") {
     return (
       <div className="table-selection__map-wrap table-selection__map-wrap--venue17">

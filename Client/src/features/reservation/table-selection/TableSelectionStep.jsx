@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { VENUE17_CONFIG } from "./config/venue17.config";
 import { TABLES } from "./config/tables.config";
+import { ADJACENCY_LINES } from './config/layout.config';
 import { FIRST_FLOOR_CONFIG } from "./config/firstFloor.config";
 import { getFloorLayoutSignature, loadFloorLayout, subscribeFloorLayout } from "./services/floorLayoutStorage";
 import { TABLE_SELECTION_RULES } from "./config/rules.config";
@@ -26,9 +27,11 @@ import "./table-selection.css";
 const formatParty = (partySize) => `${partySize} ${partySize === 1 ? "persona" : "personas"}`;
 
 export const TableSelectionStep = ({ reservation, onComplete, onBack }) => {
-  const [selectedFloor, setFloor] = useState("second");
+  const [selectedFloor, setFloor] = useState(reservation.locationId === '20' ? 'second' : 'first');
   const isVenue17 = reservation.locationId === "17";
-  const floor = isVenue17 ? "venue17" : selectedFloor;
+  const isVenue20 = reservation.locationId === '20';
+  const floor = isVenue20 ? selectedFloor : isVenue17 && selectedFloor === 'first' ? 'venue17' : `sede-${reservation.locationId}-piso-${selectedFloor === 'first' ? 1 : 2}`;
+  const generic = !['first','second','venue17'].includes(floor);
   const layoutSignature = useSyncExternalStore(
     subscribeFloorLayout,
     () => getFloorLayoutSignature(floor),
@@ -36,11 +39,17 @@ export const TableSelectionStep = ({ reservation, onComplete, onBack }) => {
   const floorTables = useMemo(() => {
     const snapshot = JSON.parse(layoutSignature || "{}");
     if (Array.isArray(snapshot.tables) && snapshot.tables.length) return snapshot.tables;
-    return loadFloorLayout(floor, floor === "venue17" ? VENUE17_CONFIG.tables : floor === "first" ? FIRST_FLOOR_CONFIG.tables : TABLES);
-  }, [floor, layoutSignature]);
-  const floorConfig = useMemo(() => floor === "venue17" ? { ...VENUE17_CONFIG, tables: floorTables } : floor === "first"
-    ? { ...FIRST_FLOOR_CONFIG, tables: floorTables }
-    : null, [floor, floorTables]);
+    return loadFloorLayout(floor, generic ? [] : floor === "venue17" ? VENUE17_CONFIG.tables : floor === "first" ? FIRST_FLOOR_CONFIG.tables : TABLES);
+  }, [floor, layoutSignature, generic]);
+  const floorConfig = useMemo(() => {
+    const base = generic ? { id: 'first', generic: true, maxPartySize: 100, adjacencyLines: [] } : floor === 'venue17' ? VENUE17_CONFIG : floor === 'first' ? FIRST_FLOOR_CONFIG : { id: 'second', adjacencyLines: ADJACENCY_LINES };
+    const known = new Set(base.adjacencyLines.flatMap(line => line.tables));
+    const added = floorTables.filter(table => !known.has(table.id));
+    return { ...base, tables: floorTables,
+      adjacencyLines: [...base.adjacencyLines, ...added.map(table => ({ direction: 'V', tables: [table.id] }))],
+      ...(base.groups ? { groups: [...base.groups, ...added.map(table => ({ tables: [table.id], maxPartySize: table.capacidad }))] } : {}),
+    };
+  }, [floor, floorTables, generic]);
   const { state, dispatch, required, availability, refresh, validNextIds, complete } = useTableSelection(reservation, floorConfig);
   const partySize = Number(reservation.partySize) || 0;
   const isContact = required.mode === "contact";
@@ -79,15 +88,15 @@ export const TableSelectionStep = ({ reservation, onComplete, onBack }) => {
       dispatch({ type: "UNDO" });
       return;
     }
-    if (!floorConfig && !state.selection.length && partySize >= 5 && partySize <= 16 && ["I23", "I24"].includes(tableId)) {
+    if (floorConfig.id === 'second' && !state.selection.length && partySize >= 5 && partySize <= 16 && ["I23", "I24"].includes(tableId)) {
       dispatch({ type: "SELECT_TABLE", selection: [tableId] });
       return;
     }
-    if (!floorConfig && partySize >= 9 && partySize <= 12 && ["I23", "I24"].includes(tableId)) {
+    if (floorConfig.id === 'second' && partySize >= 9 && partySize <= 12 && ["I23", "I24"].includes(tableId)) {
       dispatch({ type: "SELECT_TABLE", selection: [tableId] });
       return;
     }
-    if (!floorConfig && partySize >= 13 && partySize <= 16 && state.selection.length === 1 && ["I23", "I24"].includes(tableId)) {
+    if (floorConfig.id === 'second' && partySize >= 13 && partySize <= 16 && state.selection.length === 1 && ["I23", "I24"].includes(tableId)) {
       dispatch({ type: "SELECT_TABLE", selection: [...state.selection, tableId] });
       return;
     }
@@ -152,11 +161,11 @@ export const TableSelectionStep = ({ reservation, onComplete, onBack }) => {
         />
         <div className="table-selection__layout">
           <div className="table-selection__main">
-            {!isVenue17 && <div className="table-selection__floor-switch" role="group" aria-label="Seleccionar piso">
-              <button type="button" className={floor === "first" ? "is-selected" : ""} disabled={partySize > 8} onClick={() => setFloor("first")}>
-                Primer piso <small>máx. 8 personas</small>
+            {<div className="table-selection__floor-switch" role="group" aria-label="Seleccionar piso">
+              <button type="button" className={selectedFloor === "first" ? "is-selected" : ""} disabled={isVenue20 && partySize > 8} onClick={() => setFloor("first")}>
+                Primer piso {isVenue20 && <small>máx. 8 personas</small>}
               </button>
-              <button type="button" className={floor === "second" ? "is-selected" : ""} onClick={() => setFloor("second")}>
+              <button type="button" className={selectedFloor === "second" ? "is-selected" : ""} onClick={() => setFloor("second")}>
                 Segundo piso <small>todas las opciones</small>
               </button>
             </div>
@@ -248,7 +257,7 @@ export const TableSelectionStep = ({ reservation, onComplete, onBack }) => {
               <button type="button" onClick={() => dispatch({ type: "UNDO" })} disabled={!state.selection.length}>Quitar última</button>
               <button type="button" onClick={() => dispatch({ type: "RESET" })} disabled={!state.selection.length && !state.specialConfigId}>Reiniciar</button>
             </div>
-            {!isContact && <button className="table-selection__continue" type="button" disabled={!complete || firstNotice} onClick={completeSelection}>{complete ? "Continuar" : "Selecciona tu mesa"} <span>→</span></button>}
+            {!isContact && <button className="table-selection__continue" type="button" disabled={!complete || firstNotice || availability.loading || Boolean(availability.error)} onClick={completeSelection}>{complete ? "Continuar" : "Selecciona tu mesa"} <span>→</span></button>}
           </aside>
         </div>
       </section>

@@ -6,6 +6,7 @@ const HappyHour = () => {
   const { content } = useSiteContent();
   const slides = content.happyHour.slides;
   const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
   const currentIndex = activeIndex % slides.length;
   const slide = slides[currentIndex];
@@ -13,12 +14,14 @@ const HappyHour = () => {
   useEffect(() => {
     if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
     const intervalId = window.setInterval(() => {
+      setDirection(1);
       setActiveIndex((current) => (current + 1) % slides.length);
     }, 6000);
     return () => window.clearInterval(intervalId);
   }, [paused, slides.length]);
 
   const moveSlide = (direction) => {
+    setDirection(direction);
     setActiveIndex((current) => (current + direction + slides.length) % slides.length);
   };
 
@@ -35,7 +38,7 @@ const HappyHour = () => {
       aria-label="Promociones Happy Hour"
     >
       <div className="happy-image">
-        <img key={slide.id} className="happy-image__media" src={slide.image} alt="" />
+        <img key={slide.id} className={`happy-image__media happy-image__media--${direction >= 0 ? "next" : "prev"}`} src={slide.image} alt="" />
         <div className="happy-carousel-controls">
           <button type="button" onClick={() => moveSlide(-1)} aria-label="Promoción anterior">‹</button>
           <div className="happy-carousel-dots" aria-label="Seleccionar promoción">
